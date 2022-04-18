@@ -30,23 +30,23 @@ File 2: ODMatrix.txt
     Five time zone with different speed profile: 
     
 The details in    [speed choose matrix], for instance:
-[Speed 0]
-0.7
-30.0   90.0 0.0 0.5
-180.0  540.0 0.0 0.81
-570.0 690.0 0.0 0.5
-750.0 840.0 0.0 0.81
+[Speed 0] <br>
+0.7<br>
+30.0   90.0 0.0 0.5<br>
+180.0  540.0 0.0 0.81<br>
+570.0 690.0 0.0 0.5<br>
+750.0 840.0 0.0 0.81<br>
 
-Explaination
-(1) Initial speed of the vehicle is 0.7.
-(2)between time 0 to time 30, the acceleration is a=(0.5-0.7)/30 and the initial speed is 0.7. 
-  Therefore, the speed at each time t is :
-  0.7+(0.5-0.7)/30*(t-0)
-(3) the first plat speed time zone from time 30 to 90, the speed is 0.5. 
-(4) between time 90 to time 180, the acceleration is a=(0.81-0.5)/(180-90) and the initial speed is 0.81. 
-    Therefore, the speed at each time t is :
-     0.81+(0.81-0.5)/(180-90) * (t-90)
- (5) the first plat speed time zone from time 180 to 540, the speed is 0.81. 
+### Explaination
+(1) Initial speed of the vehicle is 0.7.<br>
+(2)between time 0 to time 30, the acceleration is a=(0.5-0.7)/30 and the initial speed is 0.7. <br>
+  Therefore, the speed at each time t is :<br>
+  0.7+(0.5-0.7)/30*(t-0)<br>
+(3) the first plat speed time zone from time 30 to 90, the speed is 0.5. <br>
+(4) between time 90 to time 180, the acceleration is a=(0.81-0.5)/(180-90) and the initial speed is 0.81. <br>
+    Therefore, the speed at each time t is :<br>
+     0.81+(0.81-0.5)/(180-90) * (t-90)<br>
+ (5) the first plat speed time zone from time 180 to 540, the speed is 0.81. <br>
 
 
 
