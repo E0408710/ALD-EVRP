@@ -49,5 +49,5 @@ The details in    [speed choose matrix], for instance:
  (5) the first plat speed time zone from time 180 to 540, the speed is 0.81. <br>
 
 
-
+PS. load * 1.5 is the $L$ used in formula
     
