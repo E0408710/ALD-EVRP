@@ -1,0 +1,102 @@
+from  readData import gettraveltime
+from readData import getW_a123
+import math
+speedMatrix,dis ,speed,t_table = [],[],[],[]
+
+def get_work(v_bar,t_dur,a,load):
+
+    Pdt = t_dur * v_bar * (479.1 + math.fabs(a) * (1507+load))
+
+    return Pdt
+
+def ttTao(i,j,t0,load):
+    global speedMatrix,dis ,speed,t_table
+    speedMatrix, dis, speed,t_table = gettraveltime()
+    global a1, a2, a3, mu, vehm
+    a1, a2, a3, mu, vehm = getW_a123()
+
+    W = 0
+    t = t0
+    c = speedMatrix[i][j]
+    d = dis[i][j]
+    timezone = -1
+
+
+    for kk in range(len(t_table)-1):
+        if t >= t_table[kk] and t < t_table[kk + 1]:
+            timezone = kk
+            break
+    if timezone == -1:
+
+        return 10000000,100000000
+    if timezone == 0 :
+        v0_cur = speed[c][0]["v0"]
+        a_cur = speed[c][1]["a"]
+        v = v0_cur+a_cur*t
+        t_remain = speed[c][1]["start"]-t
+        S_fwr = v*t_remain + 0.5*a_cur*(t_remain**2)
+        tmp_W = get_work(( v+  v+a_cur*t_remain ) / 2, t_remain, a_cur, load)
+
+    elif timezone%2 == 1: #platform
+        v = speed[c][int((timezone+1)//2)]["speed"]
+        a_cur = 0
+        S_fwr = v*(speed[c][int(timezone//2+1)]["end"]-t)
+        tmp_W = get_work( v, speed[c][int(timezone//2+1)]["end"]-t,0, load )
+        #4Aif j == 5: print(tmp_W,S_fwr,d)
+
+    else:
+        past_time = t-speed[c][int(timezone//2)]["end"]
+        v0_cur = speed[c][int(timezone//2)]["speed"]
+        a_cur = speed[c][int(timezone//2+1)]["a"]
+        v = v0_cur+a_cur*past_time
+        t_remain = speed[c][int(timezone//2+1)]["start"]-t
+        S_fwr = v*t_remain + 0.5*a_cur*(t_remain**2)
+        tmp_W = get_work((v+speed[c][int(timezone//2+1)]["speed"])/2,t_remain,a_cur,load)
+
+
+    while d > S_fwr:
+        d = d - S_fwr
+        t = t_table[timezone + 1]
+        timezone += 1
+        W = W+tmp_W
+        if timezone+1 == len(t_table):
+            return 10000000, 100000000
+        dur = t_table[timezone+1]-t
+
+        if timezone%2 == 1: #platform
+            v = speed[c][int((timezone+1)//2)]["speed"]
+            S_fwr = v*dur
+            tmp_W = get_work(v,dur,0,load)
+        else:
+            v0_cur = speed[c][int((timezone)//2)]['speed']
+            a_cur = speed[c][int(timezone//2+1)]["a"]
+            S_fwr = v0_cur*dur + 0.5*a_cur*(dur**2)
+            vbar =(v0_cur+ speed[c][int(timezone//2+1)]['speed'])/2
+            tmp_W = get_work(vbar,dur,a_cur,load)
+
+    if timezone == 0:
+        v0_cur = speed[c][0]["v0"]
+        a_cur = speed[c][1]["a"]
+        v_ini = v0_cur + a_cur * t
+        t_dur =  (-v_ini + math.sqrt(v_ini ** 2 + 2 * a_cur * d)) / a_cur
+        t = t + t_dur
+
+        v_after = v_ini + a_cur*t_dur
+        W = W + get_work((v_ini+v_after)/2, t_dur, a_cur, load)
+    elif timezone%2 == 1: #platform
+        v = speed[c][int((timezone+1)//2)]["speed"]
+        t = t + d/v
+        W = W+get_work( v, d/v ,0, load )#(a1*v)*()
+    else:
+        past_time = t - speed[c][int(timezone // 2)]["end"]
+        v0_cur = speed[c][int(timezone // 2)]["speed"]
+        a_cur = speed[c][int(timezone // 2 + 1)]["a"]
+        v_ini = v0_cur + a_cur * past_time
+        t_dur =  ( -v_ini+ math.sqrt(v_ini**2+2*a_cur*d) ) / a_cur
+
+        t = t+ t_dur
+        v_after = math.sqrt(v_ini**2 + 2*a_cur*d)
+
+        W =W+get_work((v_after+v0_cur)/2,t_dur,a_cur,load)
+
+    return t - t0,W
